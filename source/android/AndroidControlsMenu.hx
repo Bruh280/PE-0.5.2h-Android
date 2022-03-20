@@ -1,42 +1,32 @@
 package android;
 
 import flixel.util.FlxColor;
-import flixel.util.FlxSave;
 import flixel.math.FlxPoint;
 import flixel.ui.FlxButton;
 import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import haxe.Json;
-import android.Hitbox;
+import android.FlxHitbox;
 import android.AndroidControls.Config;
 import android.FlxVirtualPad;
 
 using StringTools;
 
-class CastomAndroidControls extends MusicBeatState
+class AndroidControlsMenu extends MusicBeatState
 {
-	var _pad:FlxVirtualPad;
-	var _hb:Hitbox;
-
+	var vpad:FlxVirtualPad;
+	var hbox:FlxHitbox;
 	var upPozition:FlxText;
 	var downPozition:FlxText;
 	var leftPozition:FlxText;
 	var rightPozition:FlxText;
-
 	var inputvari:Alphabet;
-
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
-
 	var controlitems:Array<String> = ['Pad-Right','Pad-Left','Pad-Custom','Duo','Hitbox','Keyboard'];
-
 	var curSelected:Int = 0;
-
 	var buttonistouched:Bool = false;
-
 	var bindbutton:FlxButton;
-
 	var config:Config;
 
 	override public function create():Void
@@ -58,20 +48,20 @@ class CastomAndroidControls extends MusicBeatState
 		titleText.alpha = 0.4;
 		add(titleText);
 
-		_pad = new FlxVirtualPad(RIGHT_FULL, NONE);
-		_pad.alpha = 0;
-		add(_pad);
+		vpad = new FlxVirtualPad(RIGHT_FULL, NONE);
+		vpad.alpha = 0;
+		add(vpad);
 
-		_hb = new Hitbox();
-		_hb.visible = false;
-		add(_hb);
+		hbox = new FlxHitbox();
+		hbox.visible = false;
+		add(hbox);
 
-                var exitbutton = new FlxButton(FlxG.width - 200, 50, "Exit", function()
-                {
+		var exitbutton = new FlxButton(FlxG.width - 200, 50, "Exit", function()
+		{
 			MusicBeatState.switchState(new options.OptionsState());
 		});
 		exitbutton.setGraphicSize(Std.int(exitbutton.width) * 3);
-                exitbutton.label.setFormat(null, 16, 0x333333, "center");
+		exitbutton.label.setFormat(null, 16, 0x333333, "center");
 		exitbutton.color = FlxColor.fromRGB(255,0,0);
 		add(exitbutton);		
 
@@ -81,12 +71,12 @@ class CastomAndroidControls extends MusicBeatState
 			MusicBeatState.switchState(new options.OptionsState());
 		});
 		savebutton.setGraphicSize(Std.int(savebutton.width) * 3);
-                savebutton.label.setFormat(null, 16, 0x333333, "center");
+		savebutton.label.setFormat(null, 16, 0x333333, "center");
 		savebutton.color = FlxColor.fromRGB(0,255,0);
 		add(savebutton);
 
-                inputvari = new Alphabet(0, 50, controlitems[curSelected], false, false, 0.05, 0.8);
-                inputvari.screenCenter(X);
+		inputvari = new Alphabet(0, 50, controlitems[curSelected], false, false, 0.05, 0.8);
+		inputvari.screenCenter(X);
 		add(inputvari);
 
 		var ui_tex = Paths.getSparrowAtlas('androidcontrols/menu/arrows');//thanks Andromeda Engine
@@ -105,22 +95,22 @@ class CastomAndroidControls extends MusicBeatState
 		rightArrow.animation.play('idle');
 		add(rightArrow);
 
-		upPozition = new FlxText(125, 200, 0,"Button Up X:" + _pad.buttonUp.x +" Y:" + _pad.buttonUp.y, 32);
+		upPozition = new FlxText(125, 200, 0,"Button Up X:" + vpad.buttonUp.x +" Y:" + vpad.buttonUp.y, 32);
 		upPozition.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		upPozition.borderSize = 2.4;
 		add(upPozition);
 
-		downPozition = new FlxText(125, 250, 0,"Button Down X:" + _pad.buttonDown.x +" Y:" + _pad.buttonDown.y, 32);
+		downPozition = new FlxText(125, 250, 0,"Button Down X:" + vpad.buttonDown.x +" Y:" + vpad.buttonDown.y, 32);
 		downPozition.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		downPozition.borderSize = 2.4;
 		add(downPozition);
 
-		leftPozition = new FlxText(125, 300, 0,"Button Left X:" + _pad.buttonLeft.x +" Y:" + _pad.buttonLeft.y, 32);
+		leftPozition = new FlxText(125, 300, 0,"Button Left X:" + vpad.buttonLeft.x +" Y:" + vpad.buttonLeft.y, 32);
 		leftPozition.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		leftPozition.borderSize = 2.4;
 		add(leftPozition);
 
-		rightPozition = new FlxText(125, 350, 0,"Button RIght x:" + _pad.buttonRight.x +" Y:" + _pad.buttonRight.y, 32);
+		rightPozition = new FlxText(125, 350, 0,"Button RIght x:" + vpad.buttonRight.x +" Y:" + vpad.buttonRight.y, 32);
 		rightPozition.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		rightPozition.borderSize = 2.4;
 		add(rightPozition);
@@ -140,7 +130,6 @@ class CastomAndroidControls extends MusicBeatState
 			}else if (touch.overlaps(rightArrow) && touch.justPressed){
 				changeSelection(1);
 			}
-
 			trackbutton(touch);
 		}
 	}
@@ -161,65 +150,63 @@ class CastomAndroidControls extends MusicBeatState
 		switch (daChoice)
 		{
 				case 'Pad-Right':
-					remove(_pad);
-					_pad = new FlxVirtualPad(RIGHT_FULL, NONE);
-					_pad.alpha = 0.75;
-					add(_pad);
+					remove(vpad);
+					vpad = new FlxVirtualPad(RIGHT_FULL, NONE);
+					vpad.alpha = 0.75;
+					add(vpad);
 				case 'Pad-Left':
-					remove(_pad);
-					_pad = new FlxVirtualPad(FULL, NONE);
-					_pad.alpha = 0.75;
-					add(_pad);
+					remove(vpad);
+					vpad = new FlxVirtualPad(FULL, NONE);
+					vpad.alpha = 0.75;
+					add(vpad);
 				case 'Pad-Custom':
-					remove(_pad);
-					_pad = new FlxVirtualPad(RIGHT_FULL, NONE);
-					_pad.alpha = 0.75;
-					add(_pad);
+					remove(vpad);
+					vpad = new FlxVirtualPad(RIGHT_FULL, NONE);
+					vpad.alpha = 0.75;
+					add(vpad);
 					loadcustom();
 				case 'Duo':
-					remove(_pad);
-					_pad = new FlxVirtualPad(DUO, NONE);
-					_pad.alpha = 0.75;
-					add(_pad);
+					remove(vpad);
+					vpad = new FlxVirtualPad(DUO, NONE);
+					vpad.alpha = 0.75;
+					add(vpad);
 				case 'Hitbox':
-					_pad.alpha = 0;                         
-				case 'Keyboard':                     
-					remove(_pad);
-					_pad.alpha = 0;
+					vpad.alpha = 0;
+				case 'Keyboard':
+					remove(vpad);
+					vpad.alpha = 0;
 		}
 
-                if (daChoice != "Hitbox")
-	        {
-		        _hb.visible = false;
+		if (daChoice != "Hitbox")
+		{
+			hbox.visible = false;
 		}
-                else
-                {
-	                _hb.visible = true;
-                }
+		else
+		{
+			hbox.visible = true;
+		}
 
 		if (daChoice != "Pad-Custom")
 		{
-		        upPozition.visible = false;
-		        downPozition.visible = false;
+			upPozition.visible = false;
+			downPozition.visible = false;
 			leftPozition.visible = false;
 			rightPozition.visible = false;
 		}
-                else
-                {
+		else
+		{
 			upPozition.visible = true;
 			downPozition.visible = true;
 			leftPozition.visible = true;
 			rightPozition.visible = true;
-                }
+		}
 	}
 
 	function trackbutton(touch:flixel.input.touch.FlxTouch){
 		var daChoice:String = controlitems[Math.floor(curSelected)];
 
-                if (daChoice == 'Pad-Custom')
-                {
+		if (daChoice == 'Pad-Custom'){
 			if (buttonistouched){
-				
 				if (bindbutton.justReleased && touch.justReleased)
 				{
 					bindbutton = null;
@@ -229,58 +216,57 @@ class CastomAndroidControls extends MusicBeatState
 					movebutton(touch, bindbutton);
 					setbuttontexts();
 				}
-
 			}
-                        else 
-                        {
-				if (_pad.buttonUp.justPressed) {
-					movebutton(touch, _pad.buttonUp);
+			else 
+			{
+				if (vpad.buttonUp.justPressed) {
+					movebutton(touch, vpad.buttonUp);
 				}
 				
-				if (_pad.buttonDown.justPressed) {
-					movebutton(touch, _pad.buttonDown);
+				if (vpad.buttonDown.justPressed) {
+					movebutton(touch, vpad.buttonDown);
 				}
 
-				if (_pad.buttonRight.justPressed) {
-					movebutton(touch, _pad.buttonRight);
+				if (vpad.buttonRight.justPressed) {
+					movebutton(touch, vpad.buttonRight);
 				}
 
-				if (_pad.buttonLeft.justPressed) {
-					movebutton(touch, _pad.buttonLeft);
+				if (vpad.buttonLeft.justPressed) {
+					movebutton(touch, vpad.buttonLeft);
 				}
 			}
-                }
+		}
 	}
 
 	function movebutton(touch:flixel.input.touch.FlxTouch, button:flixel.ui.FlxButton) {
-		button.x = touch.x - _pad.buttonUp.width / 2;
-		button.y = touch.y - _pad.buttonUp.height / 2;
+		button.x = touch.x - vpad.buttonUp.width / 2;
+		button.y = touch.y - vpad.buttonUp.height / 2;
 		bindbutton = button;
 		buttonistouched = true;
 	}
 
 	function setbuttontexts() {
-		upPozition.text = "Button Up X:" + _pad.buttonUp.x +" Y:" + _pad.buttonUp.y;
-		downPozition.text = "Button Down X:" + _pad.buttonDown.x +" Y:" + _pad.buttonDown.y;
-		leftPozition.text = "Button Left X:" + _pad.buttonLeft.x +" Y:" + _pad.buttonLeft.y;
-		rightPozition.text = "Button RIght x:" + _pad.buttonRight.x +" Y:" + _pad.buttonRight.y;
+		upPozition.text = "Button Up X:" + vpad.buttonUp.x +" Y:" + vpad.buttonUp.y;
+		downPozition.text = "Button Down X:" + vpad.buttonDown.x +" Y:" + vpad.buttonDown.y;
+		leftPozition.text = "Button Left X:" + vpad.buttonLeft.x +" Y:" + vpad.buttonLeft.y;
+		rightPozition.text = "Button RIght x:" + vpad.buttonRight.x +" Y:" + vpad.buttonRight.y;
 	}
 
 	function save() {
 		config.setcontrolmode(curSelected);
 		var daChoice:String = controlitems[Math.floor(curSelected)];
 
-    	        if (daChoice == 'Pad-Custom'){
+		if (daChoice == 'Pad-Custom'){
 			savecustom();
 		}
 	}
 
 	function savecustom() {
-		config.savecustom(_pad);
+		config.savecustom(vpad);
 	}
 
 	function loadcustom():Void{
-		_pad = config.loadcustom(_pad);	
+		vpad = config.loadcustom(vpad);	
 	}
 
 	function resizebuttons(vpad:FlxVirtualPad, ?int:Int = 200) {
@@ -294,10 +280,5 @@ class CastomAndroidControls extends MusicBeatState
 		leftArrow.x = inputvari.x - 60;
 		rightArrow.x = inputvari.x + inputvari.width + 10;
 		inputvari.screenCenter(X);
-	}
-
-	override function destroy()
-	{
-		super.destroy();
 	}
 }
